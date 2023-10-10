@@ -89,6 +89,9 @@ if [[ -z $nocolor ]]; then
   BOLD="\e[1m"
   ITALIC="\e[3m"
   UNDERLINE="\e[4m"
+  BULLET="\u2022"
+else
+  BULLET="*"
 fi
 
 # Parse &, <, and >, parse hyperlinks, (to remove leading and trailing spaces s@^ *@@g; s@[ \t]*\$@@g;)
@@ -100,7 +103,8 @@ file="$( sed "s@amp;@@g; s@&lt;@<@g; s@&gt;@>@g;
               s@<i>@${ITALIC/\\/\\\\}@g;
               s@</strong>\|</em>\|</b>\|</i>@${clear/\\/\\\\}@g;
               s@> *@>@g; s@%@%%@g;
-              s@&quot;@\"@g" \
+              s@&quot;@\"@g;
+              s@[[:space:]]*<li>@\\$BULLET @g" \
               <<< "$file" )"
 
 # Remove newlines and squeeze spaces, unless in code block!
@@ -118,7 +122,9 @@ file="$fnew"
 unset fstrip fcode fnew
 
 # But, re-add newlines for manual breaks
-file="$( sed "s@ *<br /> *@\n@g;s@ *<br> *@\n@g" <<< "$file" )"
+file="$( sed "s@ *<br /> *@\n@g;s@ *<br> *@\n@g; s@ *</br> *@\n@g;
+              s@ *</li> *</ul> *@@g; s@ *</li> *@\\\n@g;
+              s@<ul>@@g; s@</ul>@@g" <<< "$file" )"
 
 # Parse code block
 file="$( sed "s@^ *<code>@${BOLD/\\/\\\\}@g;
@@ -154,6 +160,9 @@ function wordWrap {
         '\n')
           i=$(( $i+1 ))
           j=-1
+          ;;
+        '\u')
+          i=$(( $i+5 ))
           ;;
       esac
 
