@@ -89,6 +89,9 @@ if [[ -z $nocolor ]]; then
   BOLD="\e[1m"
   ITALIC="\e[3m"
   UNDERLINE="\e[4m"
+  UBOLD="\e[22m"
+  UITALIC="\e[23m"
+  UUNDERLINE="\e[24m"
   BULLET="\u2022"
 else
   BULLET="*"
@@ -99,9 +102,9 @@ file="$( sed "s@amp;@@g; s@&lt;@<@g; s@&gt;@>@g;
               s@<a[^>]*>@${blue/\\/\\\\}@g;
               s@</a>@${clear/\\/\\\\}@g;
               s@^ *@@g; s@[ \t]*\$@@g;
-              s@<strong>\|<em>\|<b>@${BOLD/\\/\\\\}@g;
-              s@<i>@${ITALIC/\\/\\\\}@g;
-              s@</strong>\|</em>\|</b>\|</i>@${clear/\\/\\\\}@g;
+              s@<strong>\|<em>\|<b>@${BOLD/\\/\\\\}@g; s@</strong>\|</em>\|</b>@${UBOLD/\\/\\\\}@g;
+              s@<i>@${ITALIC/\\/\\\\}@g; s@</i>@${UITALIC/\\/\\\\}@g;
+              s@<u>@${UNDERLINE/\\/\\\\}@g; s@</u>@${UUNDERLINE/\\/\\\\}@g;
               s@> *@>@g; s@%@%%@g;
               s@&quot;@\"@g;
               s@[[:space:]]*<li>@\\$BULLET @g" \
